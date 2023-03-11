@@ -86,7 +86,7 @@ class _dm(Indicator):
         if not self.p._alt:
             smoothargs['_pearly'] = self.p._pearly  # only for accum
 
-        self._smoother = self.p._accum if not self.p._alt else self.p._ma
+        self._smoother = self.p._ma if self.p._alt else self.p._accum
 
         # Calculate
         upmove = self.i.high.diff(periods=self.p._period)  # can apply diff

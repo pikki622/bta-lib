@@ -105,7 +105,7 @@ class mama(Indicator):
 
         # the first LOOKBACK elements of the input are ignored in the ta-lib
         # calculations for the detrender. Nullify them.
-        price[0:LOOKSTART] = 0.0
+        price[:LOOKSTART] = 0.0
 
         i2, q2, re, im, period = 0.0, 0.0, 0.0, 0.0, 0.0
 

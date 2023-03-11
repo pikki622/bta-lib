@@ -55,7 +55,7 @@ class mavp(Indicator):
         ma = {str(p): self.p._ma(self.i.close, period=p) for p in uperiods}
 
         # ta-lib delivers at param "maxperiod" and not where already possible
-        maxp = max(uperiods) if not self._talib_ else self.p.maxperiod
+        maxp = self.p.maxperiod if self._talib_ else max(uperiods)
 
         pclose = self.i.close._period(maxp, rolling=True)
         self.o.mavp = pclose._apply(_mavp, periods, raw=True, **ma)

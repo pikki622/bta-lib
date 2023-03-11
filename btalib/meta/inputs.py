@@ -145,4 +145,4 @@ def _from_arg_linesholder(arginput, clsinputs):
         errors.MultiDimSmall()  # raise error
 
     # Simple first come first served, no name checking for internal objects
-    return {clsinp: out for clsinp, out in zip(clsinputs, arginput.outputs)}
+    return dict(zip(clsinputs, arginput.outputs))

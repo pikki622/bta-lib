@@ -47,7 +47,7 @@ class sar(Indicator):
         # Calculate a minusdm of the 1st two values to set the trend
         upmove, downmove = hi - hi1, lo1 - lo
         minusdm = max(downmove, 0.0) * (downmove > upmove)
-        trend = not (minusdm > 0)  # initial trend, long if not downmove
+        trend = minusdm <= 0
 
         # use the trend to set the first ep, sar values
         ep, sar = (hi, lo1) if trend else (lo, hi1)
@@ -69,16 +69,15 @@ class sar(Indicator):
                     if hi > ep:  # if extreme breached
                         ep, af = hi, min(af + AF, AFMAX)  # annotate, update af
                     sar = min(sar + af * (ep - sar), lo, lo1)  # recalc sar
-            else:  # trend is 0
-                if hi >= sar:  # trend reversal
-                    trend = 1
-                    sarbuf[i] = sar = ep  # update sar and annotate
-                    ep, af = hi, AF  # kickstart ep and af
-                    sar = min(sar + af * (ep - sar), lo, lo1)
-                else:
-                    sarbuf[i] = sar
-                    if lo < ep:  # if extreme breached
-                        ep, af = lo, min(af + AF, AFMAX)  # annotate, update af
-                    sar = max(sar + af * (ep - sar), hi, hi1)
+            elif hi >= sar:  # trend reversal
+                trend = 1
+                sarbuf[i] = sar = ep  # update sar and annotate
+                ep, af = hi, AF  # kickstart ep and af
+                sar = min(sar + af * (ep - sar), lo, lo1)
+            else:
+                sarbuf[i] = sar
+                if lo < ep:  # if extreme breached
+                    ep, af = lo, min(af + AF, AFMAX)  # annotate, update af
+                sar = max(sar + af * (ep - sar), hi, hi1)
 
         return sarbuf

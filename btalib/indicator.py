@@ -174,14 +174,13 @@ class MetaIndicator(meta.linesholder.LinesHolder.__class__):
 
         # set def return value, but consider stack depth and user pref
         ret = self
-        if not metadata.callstack:  # top-of the stack, ret following prefs
-            if config.get_return_dataframe():
-                ret = self.df
+        if not metadata.callstack and config.get_return_dataframe():
+            ret = self.df
 
         return ret  # Return itself for now
 
-    def _regenerate_inputs(cls, inputs):
-        meta.inputs._generate(cls, cls.__bases__, {'inputs': inputs})
+    def _regenerate_inputs(self, inputs):
+        meta.inputs._generate(self, self.__bases__, {'inputs': inputs})
 
 
 class Indicator(meta.linesholder.LinesHolder, metaclass=MetaIndicator):

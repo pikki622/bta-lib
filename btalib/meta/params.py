@@ -46,7 +46,7 @@ class Params:
             pass  # doe not raise inside another exception
 
         # Raise proper KeyError instead of AttributeError
-        raise KeyError('Key not found: {}'.format(item))
+        raise KeyError(f'Key not found: {item}')
 
     def keys(self):
         yield from self.__slots__
@@ -94,7 +94,7 @@ def _generate(cls, bases, dct, **kwargs):
     # params = dict(p1=(30, 'My 1'), p2=(None, 'My2', True), p3=20)
     for pbase in pbases:
         if isinstance(pbase, (list, tuple)):
-            pbase = dict((pname, tuple(pval)) for pname, *pval in pbase)
+            pbase = {pname: tuple(pval) for pname, *pval in pbase}
         # else:  # ... it was already a dict
 
         for pname, pval in pbase.items():

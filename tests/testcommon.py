@@ -45,7 +45,7 @@ def run_taindicator(name, testdata, inputs, btind, pargs):
             else:
                 break
         else:
-            logerror('[-] No ta-lib indicator found for: {}'.format(name))
+            logerror(f'[-] No ta-lib indicator found for: {name}')
             return False
 
     takwargs = testdata.get('takwargs', {})
@@ -65,7 +65,7 @@ def run_indicators(metatests, main=False):
     pargs = parse_args(None if main else [], main=main)
 
     loginfo('')
-    loginfo('[+] From main        : {}'.format(main))
+    loginfo(f'[+] From main        : {main}')
     if pargs.list_names:
         loginfo(', '.join(metatests))
         sys.exit(0)
@@ -85,7 +85,7 @@ def run_indicators(metatests, main=False):
     if not mtests:  # empty test set ...
         logerror('[-] No tests could be found')
         if pargs.name:
-            logerror('[-] Wanted Indicators: {}'.format(','.join(pargs.name)))
+            logerror(f"[-] Wanted Indicators: {','.join(pargs.name)}")
 
         sys.exit(0)
 
@@ -109,22 +109,22 @@ def run_indicators(metatests, main=False):
     # pseudo-run delayed string tests
     for name, othername in posttest.items():
         loginfo('[+]' + '-' * 74)
-        loginfo('[+] Test def is string: "{}"'.format(othername))
+        loginfo(f'[+] Test def is string: "{othername}"')
         if othername not in RESULTS:
-            logerror('[-] Test "{}" not run'.format(othername))
+            logerror(f'[-] Test "{othername}" not run')
             rother = False
         else:
-            loginfo('[+] Test completed with : {}'.format(othername))
+            loginfo(f'[+] Test completed with : {othername}')
             rother = RESULTS[othername]
 
         RESULTS[name] = rother
 
-        loginfo('[+] Test Result     : {} ({})'.format(rother, name))
+        loginfo(f'[+] Test Result     : {rother} ({name})')
 
     all_good = all(RESULTS.values())
 
     loginfo('[+]' + '-' * 74)
-    logging.info('[+] Global Result: {}'.format(all_good))
+    logging.info(f'[+] Global Result: {all_good}')
     if not all_good:
         sys.exit(1)
 

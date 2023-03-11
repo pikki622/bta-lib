@@ -206,6 +206,9 @@ def reduction_op(name, sargs=False, *args, **kwargs):
 
 def multifunc_op(name, parg=None, propertize=False):
 
+
+
+
     class _MultiFunc_Op:
         def __init__(self, line, *args, **kwargs):
             # plethora of vals needed later in __getattr__/__getitem__
@@ -231,9 +234,7 @@ def multifunc_op(name, parg=None, propertize=False):
                     # period. See below the alpha period check against offset
                     self._pval = kwargs.pop('span', 0)
                     alpha = kwargs['alpha']  # it is there ...
-                    if isinstance(alpha, (int, float)):
-                        pass  # regular behavior
-                    else:  # dynamic alpha which can be calc'ed by _mean_
+                    if not isinstance(alpha, (int, float)):
                         self._alpha_ = alpha
                         kwargs['alpha'] = 1.0
                 elif 'halflife' in kwargs:
@@ -390,6 +391,7 @@ def multifunc_op(name, parg=None, propertize=False):
             self._is_seeded = True  # call if applied after a seed
             return self
 
+
     def real_multifunc_op(self, *args, **kwargs):
         return _MultiFunc_Op(self, *args, **kwargs)
 
@@ -431,9 +433,6 @@ class MetaLine(type):
         elif isinstance(val, Line):
             self._minperiod = val._minperiod
             self._series = val._series
-        elif isinstance(val, Line):
-            self._minperiod = val._minperiod
-            self._series = val._series
         elif isinstance(val, pd.Series):
             self._minperiod = 1
             self._series = val
@@ -442,11 +441,7 @@ class MetaLine(type):
         else:
             # Don't know how to convert, store and pray
             self._minperiod = 1
-            if index is None:
-                self._series = val  # 1st column
-            else:
-                self._series = pd.Series(val, index=index)
-
+            self._series = val if index is None else pd.Series(val, index=index)
         self._name = name  # fix the name of the data series
 
         self.__init__(*args, **kwargs)  # init instance
@@ -533,14 +528,14 @@ class Line(metaclass=MetaLine):
 
     def _setval(self, i0=0, i1=0, val=np.nan):
         # set a value relative to minperiod as start.
-        if not i0 and not i1:
-            self._series[self._minperiod - 1:i1] = val
-        else:
+        if i0 or i1:
             i0 = self._minperiod - 1 + i0
             if i1 >= 0:
                 i1 = i0 + (i1 or 1)  # i1 rel to i0 or extend i0 by 1 for singl value
             self._series[i0:i1] = val
 
+        else:
+            self._series[self._minperiod - 1:i1] = val
         return self
 
     def _minperiodize(self, *args, raw=False, **kwargs):

@@ -75,7 +75,7 @@ class ht_sine(Indicator):
 
         # the first LOOKBACK elements of the input are ignored in the ta-lib
         # calculations for the detrender. Nullify them.
-        price[0:LOOKSTART] = 0.0
+        price[:LOOKSTART] = 0.0
 
         # Variables for the running calculations
         i2, q2, re, im, period, smoothperiod = 0.0, 0.0, 0.0, 0.0, 0.0, 0.0

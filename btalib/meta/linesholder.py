@@ -16,10 +16,11 @@ class SeriesFetcher:
         self._o = outputs
 
     def __getattr__(self, attr):
-        if not hasattr(self._o, attr):
-            return super().__getattr__(attr)
-
-        return getattr(self._o, attr).series
+        return (
+            getattr(self._o, attr).series
+            if hasattr(self._o, attr)
+            else super().__getattr__(attr)
+        )
 
     def __contains__(self, item):
         return self._o.__contains__(item)

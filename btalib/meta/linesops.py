@@ -151,17 +151,10 @@ _REDOPS = {
 
 
 _MULTIFUNCOPS = dict(
-    # MULTIFUNCtion OPerations
-    # Provide an object which can later provide any (of many) operations like
-    # in a series: rolling(window=10).mean()
-
-    # provide a set of oprations
     expanding=dict(parg='min_periods'),
-    ewm=dict(),
-    _ewm=dict(),
+    ewm={},
+    _ewm={},
     rolling=dict(parg='window'),
-
-    # accessors
     iloc=dict(propertize=True),
     loc=dict(propertize=True),
 )

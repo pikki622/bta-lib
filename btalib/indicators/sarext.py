@@ -56,17 +56,16 @@ class sarext(Indicator):
         if not self.p.startval:
             upmove, downmove = hi - hi1, lo1 - lo
             minusdm = max(downmove, 0.0) * (downmove > upmove)
-            trend = not (minusdm > 0)  # initial trend, long if not downmove
+            trend = minusdm <= 0
 
             # use the trend to set the first ep, sar values
             ep, sar = (hi, lo1) if trend else (lo, hi1)
+        elif self.p.startval > 0:
+            trend = 1
+            ep, sar = hi, self.p.startval
         else:
-            if self.p.startval > 0:
-                trend = 1
-                ep, sar = hi, self.p.startval
-            else:
-                trend = 0
-                ep, sar = lo, abs(self.p.startval)
+            trend = 0
+            ep, sar = lo, abs(self.p.startval)
 
         AFLONG, AFMAXLONG = self.p.aflong, self.p.afmaxlong
         AFSHORT, AFMAXSHORT = self.p.afshort, self.p.afmaxshort
@@ -90,17 +89,16 @@ class sarext(Indicator):
                     if hi > ep:  # if extreme breached
                         ep, aflong = hi, min(aflong + AFLONG, AFMAXLONG)
                     sar = min(sar + aflong * (ep - sar), lo, lo1)  # recalc sar
-            else:  # trend is 0
-                if hi >= sar:  # trend reversal
-                    trend = 1
-                    sarbuf[i] = sar = ep - sar * OFFSETONREVERSE
+            elif hi >= sar:  # trend reversal
+                trend = 1
+                sarbuf[i] = sar = ep - sar * OFFSETONREVERSE
 
-                    ep, aflong = hi, AFLONG  # kickstart ep and af
-                    sar = min(sar + aflong * (ep - sar), lo, lo1)
-                else:
-                    sarbuf[i] = -sar
-                    if lo < ep:  # if extreme breached
-                        ep, afshort = lo, min(afshort + AFSHORT, AFMAXSHORT)
-                    sar = max(sar + afshort * (ep - sar), hi, hi1)
+                ep, aflong = hi, AFLONG  # kickstart ep and af
+                sar = min(sar + aflong * (ep - sar), lo, lo1)
+            else:
+                sarbuf[i] = -sar
+                if lo < ep:  # if extreme breached
+                    ep, afshort = lo, min(afshort + AFSHORT, AFMAXSHORT)
+                sar = max(sar + afshort * (ep - sar), hi, hi1)
 
         return sarbuf
